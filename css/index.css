@@ -1,36 +1,87 @@
-.cover {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 1519px;
-    height: 745px;
-    z-index: 1;
-    animation: covermove 0.5s ease 1.8s forwards; 
-    background: url(https://img2.imgtp.com/2024/03/17/iOhR2vZ5.jpg) #fff;
-    background-clip: text;
-     -webkit-background-clip: text;
-     -webkit-text-fill-color: transparent;
-} 
+    /* Reset */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
-.content {
-    animation: content-slide-in 1.5s steps(7) forwards;
-    overflow: hidden;
-    white-space: nowrap;
-    position: relative;
-    top: 250px;
-    margin: auto;
-    /* color: transparent; */
-    text-align: center;
-    font: 900 200px/750px monospace;
-    letter-spacing: 10px;
-    /* font-family: 'Courier New', Courier, monospace; */
-}
+    html, body { height: 100%; }
 
-@keyframes content-slide-in {
-    from {
-        width: 0;
+    /* 全屏封面 */
+    .cover {
+      position: relative;
+      width: 100%;
+      min-height: 100vh;              /* 覆盖整个视口 */
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #000;               /* 后备色 */
     }
-    to {
-        width: 790px;
+
+    /* 背景图层（在 cover::before） */
+    .cover::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image: url('https://img2.imgtp.com/2024/03/17/iOhR2vZ5.jpg');
+      background-size: cover;
+      background-position: center;
+      transform-origin: center;
+      z-index: 0;
+      will-change: transform;
+      filter: saturate(1.05) contrast(1.02);
     }
-}
+
+    /* 文字容器，放在 cover 之上 */
+    .content {
+      position: relative;
+      z-index: 2;
+      display: inline-block;         /* 宽度动画对 inline-block 有效 */
+      overflow: hidden;
+      white-space: nowrap;
+      /* 使用 clamp 让字体在不同屏幕下自适应 */
+      font-weight: 900;
+      font-family: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      font-size: clamp(3rem, 12vw, 9rem);
+      letter-spacing: 0.08em;
+      line-height: 1;
+      text-transform: uppercase;
+      /* 将背景图直接放在文字上并裁剪到文字 */
+      background-image: url('https://img2.imgtp.com/2024/03/17/iOhR2vZ5.jpg');
+      background-size: cover;
+      background-position: center;
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      color: transparent;
+      /* 为 reveal 动画准备：初始宽度为 0 */
+      width: 0;
+    }
+
+    /* reveal 动画：从 0 到 100% */
+    @keyframes reveal {
+      from { width: 0; }
+      to   { width: 100%; }
+    }
+
+    /* 当添加 .is-revealed 类时触发动画 */
+    .content.is-revealed {
+      animation: reveal 1.4s steps(20, end) forwards;
+    }
+
+    /* 可选：一个副标题示例 */
+    .subtitle {
+      position: absolute;
+      bottom: 4vh;
+      left: 50%;
+      transform: translateX(-50%);
+      color: rgba(255,255,255,0.85);
+      background: rgba(0,0,0,0.35);
+      padding: 0.6rem 1rem;
+      border-radius: 8px;
+      z-index: 2;
+      font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+      backdrop-filter: blur(4px);
+    }
+
+    /* 小屏适配，避免 letter-spacing 太大 */
+    @media (max-width: 480px) {
+      .content { letter-spacing: 0.04em; }
+    }
