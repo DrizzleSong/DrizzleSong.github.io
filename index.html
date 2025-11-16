@@ -1,55 +1,85 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <!-- 修正后的 meta refresh：注意分号 -->
-  <meta http-equiv="refresh" content="2; url=html/home.html" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Cover Demo</title>
-  <link rel="stylesheet" href="css/index.css">
-  
-</head>
-<body>
-  <div class="cover">
-    <div class="content" id="heroText">WELCOME</div>
-    <div class="subtitle">Auto-redirecting in 2s…</div>
-  </div>
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<!-- 跳转到主页 -->
+		<meta http-equiv="refresh" content="2, url=html/home.html" />
+		<!-- <link rel="stylesheet" href="../css/index.css" /> -->
+		<!-- <link rel="stylesheet" href="../css/body.css" /> -->
+		<title>Document</title>
+		<style>
+			html,
+			body {
+				margin: 0;
+				padding: 0;
+				height: 200vh;
+				overflow-x: hidden;
+			}
 
-  <script>
-    // 性能友好的滚动视差：将 ::before 的 transform 用 requestAnimationFrame 更新
-    (function() {
-      const cover = document.querySelector('.cover');
-      const bg = document.querySelector('.cover::before'); // 不能直接选伪元素
-      // 所以我们修改 cover 的 style 来影响伪元素：利用 CSS 变量
-      // 修改 CSS，将伪元素的 transform 来源于 --bg-translate
-      document.styleSheets[0].insertRule(`
-        .cover::before { transform: translateY(var(--bg-translate, 0px)); }
-      `, document.styleSheets[0].cssRules.length);
+			.cover {
+				background-image: url('images/test.jpg');
+				background-size: cover;
+				background-position: 50% 50%;
+				height: 200vh;
+				font: 900 39rem '';
+				line-height: 130vh;
+				-webkit-background-clip: text;
+				-webkit-text-fill-color: transparent;
+				position: relative;
+				text-align: center;
+				overflow: hidden;
+			}
 
-      let latestY = 0;
-      let ticking = false;
+			.cover::before {
+				content: '';
+				background-size: cover;
+				background-image: inherit;
+				background-position: 50% 50%;
+				position: absolute;
+				top: 0;
+				left: 0;
+				bottom: 0;
+				right: 0;
+				z-index: -99;
+			}
 
-      function onScroll() {
-        latestY = window.scrollY;
-        if (!ticking) {
-          requestAnimationFrame(() => {
-            // 我们以较小幅度移动背景，创造视差效果
-            const move = latestY * 0.3; // 倍率可调
-            document.querySelector('.cover').style.setProperty('--bg-translate', move + 'px');
-            ticking = false;
-          });
-          ticking = true;
-        }
-      }
+			h1 {
+				position: absolute;
+				text-align: center;
+				width: 100%;
+				letter-spacing: 10px;
+				color: #fff;
+			}
 
-      window.addEventListener('scroll', onScroll, { passive: true });
+			h2 {
+				position: absolute;
+				letter-spacing: 2px;
+				top: 120vh;
+				width: 60%;
+				color: #fff;
+				left: 50%;
+				transform: translateX(-50%);
+				padding: 30px;
+				background-color: rgba(0, 0, 0, 0.3);
+			}
+		</style>
+	</head>
+	<body>
+		<div class="cover"><div class="content">WELCOME</div></div>
+		<script>
+			const background = document.querySelector('.cover');
 
-      // 启动 reveal 动画（也可以基于时间或交互触发）
-      const hero = document.getElementById('heroText');
-      // 延迟小量以便 CSS 渲染就绪
-      setTimeout(() => hero.classList.add('is-revealed'), 200);
-    })();
-  </script>
-</body>
+			document.addEventListener('scroll', () => {
+				const scrollY = window.scrollY;
+
+				if (scrollY !== 0) {
+					background.style.backgroundPosition = `calc(50% + ${scrollY}px) calc(50% + ${scrollY}px)`;
+				} else {
+					background.style.backgroundPosition = '';
+				}
+			});
+		</script>
+	</body>
 </html>
